@@ -1,4 +1,4 @@
-osg_repos:
+osg:
   pkgrepo.managed:
     - name: osg34-el7
     - humanname: OSG Software for Enterprise Linux 7 - $basearch

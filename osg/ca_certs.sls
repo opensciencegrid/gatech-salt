@@ -1,5 +1,5 @@
 include:
-  - osg.repos
+  - osg
   - osg.base_packages
 
 ca_certs:

@@ -1,7 +1,6 @@
 include:
-  - osg.repos
-  - osg.ca_certs
-  - osg.base_packages
+  - osg
+  - osg.base_setup
 
 cvmfs:
   pkg.installed:

@@ -1,5 +1,5 @@
 include:
-  - osg.repos
+  - osg
 
 osg_base_packages:
   pkg.installed:

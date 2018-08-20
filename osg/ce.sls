@@ -1,6 +1,6 @@
 include:
-  - osg.repos
-  - osg.base_packages
+  - osg.base_setup
+  - osg.host_certs
   - osg.condor_submit
 
 osg-ce:

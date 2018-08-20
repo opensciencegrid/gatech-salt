@@ -1,7 +1,7 @@
 include:
-  - osg.repos
-  - osg.base_packages
-  - osg.ca_certs
+  - osg
+  - osg.base_setup
+  - osg.host_certs
 
 stashcache:
   pkg.installed:

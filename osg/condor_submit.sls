@@ -1,6 +1,6 @@
 include:
-  - osg.repos
-  - osg.base_packages
+  - osg
+  - osg.base_setup
 
 condor-submit:
   pkg.installed:

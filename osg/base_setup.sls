@@ -1,20 +1,18 @@
 include:
-  - osg.repos
+  - osg
   - osg.ca_certs
+  - osg.base_packages
 
-base_setup:
-  pkg.latest:
-    - fromrepo: osg34-el7
+osg_ntpd_install:
+  pkg.installed:
     - pkgs:
-      - osg-ca-certs
-    - require:
-      - pkg: yum-plugin-priorities
- pkg.installed:
-    - pkgs:
-      - yum-plugin-priorities
-      - fetch-crl
       - ntpd
+
+osg_ntpd_service:
  service.running:
+    - name: ntpd
     - enable: True
     - require:
-      -pkg: ntpd
+      - osg_ntpd_install
+
+

@@ -6,7 +6,7 @@ include:
 osg_ntpd_install:
   pkg.installed:
     - pkgs:
-      - ntpd
+      - ntp
 
 osg_ntpd_service:
  service.running:

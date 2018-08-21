@@ -7,7 +7,6 @@ osg-ce:
   pkg.installed:
     - pkgs:
       - osg-ce-condor
-    - fromrepo: osg34-el7
     - require:
       - pkg: condor-submit
 

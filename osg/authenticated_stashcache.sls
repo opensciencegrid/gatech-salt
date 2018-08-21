@@ -9,7 +9,6 @@ authenticated_stashcache:
       - stashcache-cache-server
       - xrootd-lcmaps
       - globus-proxy-utils
-    - fromrepo: osg34-el7
     - require:
       - pkg: osg_base_packages
       - pkg: ca_certs

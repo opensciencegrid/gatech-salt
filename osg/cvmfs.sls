@@ -12,8 +12,9 @@ cvmfs:
     - name: /etc/cvmfs/default.local
     - source: salt://osg/files/cvmfs/cvmfs_local_config
 
-autofs:
+autofs-osg:
   service.running:
+    - name autofs
     - enable: true
     - require:
       - pkg: osg-oasis

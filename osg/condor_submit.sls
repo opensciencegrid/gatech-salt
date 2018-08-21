@@ -6,7 +6,6 @@ condor-submit:
   pkg.installed:
     - pkgs:
       - condor
-    - fromrepo: osg34-el7
     - require:
       - pkg: osg_base_packages
   file.managed:

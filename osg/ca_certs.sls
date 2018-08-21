@@ -4,7 +4,6 @@ include:
 
 ca_certs:
   pkg.latest:
-    - fromrepo: osg34-el7
     - pkgs:
       - osg-ca-certs
     - require:

@@ -6,7 +6,6 @@ frontier-squid:
   pkg.installed:
     - pkgs:
       - frontier-squid
-    - fromrepo: osg34-el7
     - require:
       - pkg: osg_base_packages
   file.managed:

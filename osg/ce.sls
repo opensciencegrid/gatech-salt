@@ -8,7 +8,7 @@ osg-ce:
     - pkgs:
       - osg-ce-condor
     - require:
-      - pkg: condor-submit
+      - condor-submit
 
 ce-config:
   file.managed:

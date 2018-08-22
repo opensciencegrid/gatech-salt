@@ -9,8 +9,8 @@ stashcache:
       - stashcache-daemon 
       - stashcache-cache-server
     - require:
-      - pkg: osg_base_packages
-      - pkg: ca_certs
+      - osg_base_packages
+      - ca_certs
 
 stashcache-xrootd-config:
   file.managed:

@@ -8,7 +8,7 @@ globus-gridftp-server:
     - pkgs:
       - osg-gridftp
     - require:
-      - pkg: osg_base_packages
-      - pkg: ca_certs
+      - osg_base_packages
+      - ca_certs
   service.running:
     - enable: true

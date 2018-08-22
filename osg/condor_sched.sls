@@ -7,7 +7,7 @@ condor-sched:
     - pkgs:
       - condor
     - require:
-      - pkg: osg_base_packages
+      - osg_base_packages
   file.managed:
     - name: /etc/condor/config.d/99-sched-local.conf
     - source: salt://osg/files/condor/condor_sched.conf

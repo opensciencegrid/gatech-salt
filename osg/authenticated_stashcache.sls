@@ -10,9 +10,8 @@ authenticated_stashcache:
       - xrootd-lcmaps
       - globus-proxy-utils
     - require:
-      - pkg: osg_base_packages
-      - pkg: ca_certs
-      - base_setup
+      - osg_base_packages
+      - ca_certs
 
 auth-stashcache-xrootd-config:
   file.managed:
@@ -52,15 +51,14 @@ auth-stashcache-condor-service:
     - name: condor 
     - enable: true
     - require:
-      - pkg: stashcache-cache-server
+      - authenticated_stashcache
 
 auth-stashcache-xrootd-server-service:
   service.running:
     - name: xrootd@stashcache-cache-server-auth
     - enable: true
     - require:
-      - pkg: stashcache-cache-server
-      - pkg: stashcache-daemon
+      - authenticated_stashcache
     - watch:
       - file: /etc/xrootd/Authfile-noauth
       - file: /etc/xrootd/xrootd-stashcache-cache-server.cfg
@@ -78,8 +76,7 @@ auth-stashcache-timer-service:
     - name: xrootd-renew-proxy.timer
     - enable: true
     - require:
-      - pkg: stashcache-cache-server
-      - pkg: stashcache-daemon
+      - authenticated_stashcache
 
     
 

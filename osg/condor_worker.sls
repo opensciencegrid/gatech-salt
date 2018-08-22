@@ -12,9 +12,8 @@ condor-worker:
     - name: /etc/condor/config.d/99-worker-local.conf
     - source: salt://osg/files/condor/condor_worker.conf
   service.running:
+    - name: condor
     - enable: true
-    - require:
-      - pkg: condor
 # include state that sets these users
 #      - user: gatech
 #      - user: ligo

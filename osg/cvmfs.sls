@@ -17,7 +17,7 @@ autofs-osg:
     - name: autofs
     - enable: true
     - require:
-      - pkg: osg-oasis
+      - osg-oasis
   file.managed:
     - name: /etc/auto.master.d/cvmfs.autofs
     - source: salt://osg/files/cvmfs/autofs_config

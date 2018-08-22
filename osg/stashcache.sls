@@ -33,15 +33,14 @@ stashcache-condor-service:
     - name: condor 
     - enable: true
     - require:
-      - pkg: stashcache-cache-server
+      - stashcache
 
 stashcache-xrootd-server:
   service.running:
     - name: xrootd@stashcache-cache-server
     - enable: true
     - require:
-      - pkg: stashcache-cache-server
-      - pkg: stashcache-daemon
+      - stashcache
     - watch:
       - file: /etc/xrootd/Authfile-noauth
       - file: /etc/xrootd/xrootd-stashcache-cache-server.cfg

@@ -12,8 +12,7 @@ condor-submit:
     - name: /etc/condor/config.d/99-submit-local.conf
     - source: salt://osg/files/condor/condor_submit.conf
   service.running:
+    - name: condor
     - enable: true
-    - require:
-      - pkg: condor
     - watch:
       - file: /etc/condor/config.d/99-submit-local.conf

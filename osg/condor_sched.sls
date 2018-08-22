@@ -12,8 +12,7 @@ condor-sched:
     - name: /etc/condor/config.d/99-sched-local.conf
     - source: salt://osg/files/condor/condor_sched.conf
   service.running:
+    - name: condor
     - enable: true
-    - require:
-      - pkg: condor
     - watch:
       - file: /etc/condor/config.d/99-sched-local.conf

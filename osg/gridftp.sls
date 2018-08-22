@@ -12,5 +12,3 @@ globus-gridftp-server:
       - pkg: ca_certs
   service.running:
     - enable: true
-    - require:
-      - pkg: osg-gridftp

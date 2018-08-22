@@ -26,6 +26,6 @@ condor-ce:
     - name: condor-ce
     - enable: true
     - require:
-      - pkg: osg-ce-condor
+      - osg-ce
     - onchanges: 
       - file: /etc/osg/config.d/99-local.ini

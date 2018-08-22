@@ -14,7 +14,7 @@ cvmfs:
 
 autofs-osg:
   service.running:
-    - name autofs
+    - name: autofs
     - enable: true
     - require:
       - pkg: osg-oasis

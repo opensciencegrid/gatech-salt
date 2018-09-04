@@ -11,7 +11,7 @@ install_host_cert:
 
 install_host_key:
   file.managed:
-    - name: /etc/grid-security/hostcert.pem
+    - name: /etc/grid-security/hostkey.pem
     - source: salt://osg/files/hostcerts/{{ grains['host'] }}/hostkey.pem
     - user: root
     - group: root

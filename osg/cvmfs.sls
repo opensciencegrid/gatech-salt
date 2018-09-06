@@ -18,6 +18,8 @@ autofs-osg:
     - enable: true
     - require:
       - cvmfs
-  file.managed:
-    - name: /etc/auto.master.d/cvmfs.autofs
-    - source: salt://osg/files/cvmfs/autofs_config
+  file.line:
+    - name: /etc/auto.master
+    - content: "/cvmfs /etc/auto.cvmfs"
+    - mode: ensure
+    - after: "/nv     /etc/auto.nv"

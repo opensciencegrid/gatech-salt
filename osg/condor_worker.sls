@@ -9,9 +9,6 @@ condor-worker:
     - require:
       - osg_base_packages
   file.managed:
-    - name: /etc/condor/config.d/99-base-local.conf
-    - source: salt://osg/files/condor/condor_base.conf
-  file.managed:
     - name: /etc/condor/config.d/99-worker-local.conf
     - source: salt://osg/files/condor/condor_worker.conf
   service.running:
@@ -22,5 +19,4 @@ condor-worker:
 #      - user: ligo
 #      - user; osg
     - watch:
-      - file: /etc/condor/config.d/99-base-local.conf
       - file: /etc/condor/config.d/99-worker-local.conf

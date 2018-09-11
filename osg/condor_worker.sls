@@ -1,6 +1,7 @@
 include:
   - osg
   - osg.base_setup
+  - osg.condor_base
 
 condor-worker:
   pkg.installed:

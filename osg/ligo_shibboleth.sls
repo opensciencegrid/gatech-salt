@@ -31,6 +31,16 @@ shib-ssl-conf:
     - name: /etc/httpd/conf.d/ssl.conf
     - source: salt://osg/files/httpd/ssl.conf
 
+osg-shibboleth-cert:
+  file.managed:
+    - name: /etc/pki/tls/certs/osg-shibboleth.pace.gatech.edu.pem
+    - source: salt://osg/files/httpd/selfsignedcert.pem
+
+osg-shibboleth-key:
+  file.managed:
+    - name: /etc/pki/tls/private/osg-shibboleth.pace.gatech.edu.key.pem
+    - source: salt://osg/files/httpd/selfsignedkey.pem
+
 osg-shibboleth-httpd:
   pkg.installed:
     - pkgs:

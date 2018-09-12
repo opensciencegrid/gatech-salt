@@ -9,10 +9,10 @@ condor-base:
     - require:
       - osg_base_packages
   file.managed:
-    - name: /etc/condor/config.d/99-base-local.conf
+    - name: /etc/condor/config.d/10-base.conf
     - source: salt://osg/files/condor/condor_base.conf
   service.running:
     - name: condor
     - enable: true
     - watch:
-      - file: /etc/condor/config.d/99-base-local.conf
+      - file: /etc/condor/config.d/10-base.conf

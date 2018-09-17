@@ -8,6 +8,7 @@ cvmfs:
       - osg-oasis
     - require:
       - pkg: osg_base_packages
+      - user: cvmfs
   file.managed:
     - name: /etc/cvmfs/default.local
     - source: salt://osg/files/cvmfs/cvmfs_local_config

@@ -41,11 +41,17 @@ osg-shibboleth-key:
     - name: /etc/pki/tls/private/osg-shibboleth.pace.gatech.edu.key.pem
     - source: salt://osg/files/httpd/selfsignedkey.pem
 
+osg-shibboleth-service:
+  pkg.installed:
+    - name: shibboleth
+  service.running:
+    - enable: true
+    - name: shibd
+
 osg-shibboleth-httpd:
   pkg.installed:
     - pkgs:
       - httpd
-      - shibboleth
       - mod_ssl
   service.running:
     - enable: true
@@ -54,3 +60,5 @@ osg-shibboleth-httpd:
       - file: /etc/httpd/conf.d/shib.conf
       - file: /etc/httpd/conf.d/userdir.conf
       - file: /etc/httpd/conf.d/ssl.conf
+    - require:
+      - osg-shibboleth-service

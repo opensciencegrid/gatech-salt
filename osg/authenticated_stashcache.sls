@@ -1,6 +1,7 @@
 include:
   - osg.base_setup
   - osg.host_certs
+  - osg.stashcache_config
 
 authenticated_stashcache:
   pkg.installed:
@@ -13,38 +14,17 @@ authenticated_stashcache:
       - osg_base_packages
       - ca_certs
 
-auth-stashcache-xrootd-config:
+ligo_gridmap_cron:
   file.managed:
-    - name: /etc/xrootd/xrootd-stashcache-cache-server.cfg
-    - source: salt://osg/files/auth-stashcache/xrootd-stashcache-cache-server.cfg
-      
-auth-stashcache-auth-config:
-  file.managed:
-    - name: /etc/xrootd/Authfile-noauth 
-    - source: salt://osg/files/auth-stashcache/Authfile
-      
-auth-stashcache-robot-config:
-  file.managed:
-    - name: /etc/xrootd/stashcache-robots.txt 
-    - source: salt://osg/files/auth-stashcache/stashcache-robots.txt
-     
-auth-stashcache-config-symlink:
-{% if not salt['file.file_exists' ]('/etc/xrootd/xrootd-stashcache-cache-server-auth.cfg') %}
-    file.symlink:
-      - name: /etc/xrootd/xrootd-stashcache-cache-server.cfg
-      - target: /etc/xrootd/xrootd-stashcache-cache-server-auth.cfg
-{% endif %}
+    - name: /etc/cron.d/generate_ligo_gridmap.cron
+    - source: salt://osg/files/auth-stashcache/generate_ligo_gridmap.cron
 
-proxy-timer-service-file:
+ligo_gridmap_script:
   file.managed:
-    - name: /usr/lib/systemd/system/xrootd-renew-proxy.timer
-    - source: salt://osg/files/auth-stashcache/xrootd-renew-proxy.timer
-     
-proxy-service-file:
-  file.managed:
-    - name: /usr/lib/systemd/system/xrootd-renew-proxy.service
-    - source: salt://osg/files/auth-stashcache/xrootd-renew-proxy.service
-     
+    - name: /usr/local/sbin/grid-mapfile.ligo-cvmfs.py
+    - source: salt://osg/files/auth-stashcache/grid-mapfile.ligo-cvmfs.py
+    - user: root
+    - mode: 755
 
 auth-stashcache-condor-service:
   service.running:
@@ -59,6 +39,7 @@ auth-stashcache-xrootd-server-service:
     - enable: true
     - require:
       - authenticated_stashcache
+      - user: ligo
     - watch:
       - file: /etc/xrootd/Authfile-noauth
       - file: /etc/xrootd/xrootd-stashcache-cache-server.cfg

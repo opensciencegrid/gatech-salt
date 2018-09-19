@@ -2,6 +2,7 @@ include:
   - osg
   - osg.base_setup
   - osg.host_certs
+  - osg.stashcache_config
 
 stashcache:
   pkg.installed:
@@ -11,22 +12,6 @@ stashcache:
     - require:
       - osg_base_packages
       - ca_certs
-
-stashcache-xrootd-config:
-  file.managed:
-    - name: /etc/xrootd/xrootd-stashcache-cache-server.cfg
-    - source: salt://osg/files/stashcache/xrootd-stashcache-cache-server.cfg
-      
-stashcache-auth-config:
-  file.managed:
-    - name: /etc/xrootd/Authfile-noauth 
-    - source: salt://osg/files/stashcache/Authfile
-      
-stashcache-robot-config:
-  file.managed:
-    - name: /etc/xrootd/stashcache-robots.txt 
-    - source: salt://osg/files/stashcache/stashcache-robots.txt
-      
 
 stashcache-condor-service:
   service.running:

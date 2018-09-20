@@ -32,6 +32,13 @@ proxy-service-file:
     - name: /usr/lib/systemd/system/xrootd-renew-proxy.service
     - source: salt://osg/files/auth-stashcache/xrootd-renew-proxy.service
 
+stashcache-certdir:
+  file.directory:
+    - name: /etc/grid-security/xrd/
+    - mode: 755
+    - user: xrootd
+    - group: xrootd
+
 stashcache-hostkey:
   file.managed:
     - name: /etc/grid-security/xrd/xrdkey.pem

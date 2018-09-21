@@ -7,6 +7,11 @@ stashcache-xrootd-config:
     - name: /etc/xrootd/xrootd-stashcache-cache-server.cfg
     - source: salt://osg/files/auth-stashcache/xrootd-stashcache-cache-server.cfg
       
+stashcache-xrootd-config-auth:
+  file.managed:
+    - name: /etc/xrootd/xrootd-stashcache-cache-server-auth.cfg
+    - source: salt://osg/files/auth-stashcache/xrootd-stashcache-cache-server.cfg
+
 stashcache-auth-config:
   file.managed:
     - name: /etc/xrootd/Authfile-auth 

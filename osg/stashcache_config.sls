@@ -2,6 +2,11 @@ include:
   - osg.base_setup
   - osg.host_certs
 
+stashcache-xrootd-lcmaps:
+  file.managed:
+    - name: /etc/xrootd/lcmaps.cfg
+    - source: salt://osg/files/auth-stashcache/lcmaps.cfg
+
 stashcache-xrootd-config:
   file.managed:
     - name: /etc/xrootd/xrootd-stashcache-cache-server.cfg

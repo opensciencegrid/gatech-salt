@@ -54,6 +54,7 @@ stashcache-hostkey:
     - name: /etc/grid-security/xrd/xrdkey.pem
     - source: salt://osg/files/hostcerts/osg-gftp/hostkey.pem
     - user: xrootd
+    - mode: 400
 
 stashcache-hostcert:
   file.managed:

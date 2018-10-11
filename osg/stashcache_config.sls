@@ -2,6 +2,12 @@ include:
   - osg.base_setup
   - osg.host_certs
 
+stashcache-cache-dir:
+  file.directory:
+    - name: /var/run/xrootd-cache
+    - mode: 700
+    - user: xrootd
+
 stashcache-xrootd-lcmaps:
   file.managed:
     - name: /etc/xrootd/lcmaps.cfg

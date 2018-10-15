@@ -15,7 +15,7 @@ condor-worker:
   service.running:
     - name: condor
     - enable: true
-    - require
+    - require:
       - user: ligo
 # include state that sets these users
 #      - user: gatech

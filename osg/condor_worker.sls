@@ -3,6 +3,11 @@ include:
   - osg.base_setup
   - osg.condor_base
 
+condor-scratch:
+  file.managed:
+    - name: /scratch
+    - mode: 1777 
+
 condor-worker:
   pkg.installed:
     - pkgs:
@@ -16,9 +21,9 @@ condor-worker:
     - name: condor
     - enable: true
     - require:
+      - condor-scratch
       - user: ligo
-# include state that sets these users
 #      - user: gatech
-#      - user; osg
+#      - user: osg
     - watch:
       - file: /etc/condor/config.d/99-worker-local.conf

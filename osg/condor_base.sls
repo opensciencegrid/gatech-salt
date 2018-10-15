@@ -5,6 +5,8 @@ include:
 condor-user:
   user.present:
     - name: condor
+    - uid: 65
+    - gid: 64
 
 condor-base:
   pkg.installed:

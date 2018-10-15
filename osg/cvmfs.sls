@@ -5,6 +5,8 @@ include:
 cvmfs-user:
   user.present:
     - name: cvmfs
+    - uid: 486
+    - gid: 486
 
 cvmfs:
   pkg.installed:

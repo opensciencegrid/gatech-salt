@@ -2,13 +2,17 @@ include:
   - osg
   - osg.base_setup
 
+cvmfs-user:
+  user.present:
+    - name: cvmfs
+
 cvmfs:
   pkg.installed:
     - pkgs:
       - osg-oasis
     - require:
       - pkg: osg_base_packages
-      - user: cvmfs
+      - cvmfs-user
   file.managed:
     - name: /etc/cvmfs/default.local
     - source: salt://osg/files/cvmfs/cvmfs_local_config

@@ -4,7 +4,7 @@ include:
   - osg.condor_base
 
 condor-scratch:
-  file.managed:
+  file.directory:
     - name: /scratch
     - mode: 1777 
 

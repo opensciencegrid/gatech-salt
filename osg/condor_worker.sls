@@ -15,9 +15,10 @@ condor-worker:
   service.running:
     - name: condor
     - enable: true
+    - require
+      - user: ligo
 # include state that sets these users
 #      - user: gatech
-#      - user: ligo
 #      - user; osg
     - watch:
       - file: /etc/condor/config.d/99-worker-local.conf

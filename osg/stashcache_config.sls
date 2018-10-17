@@ -4,7 +4,7 @@ include:
 
 stashcache-cache-dir:
   file.directory:
-    - name: /var/run/xrootd-cache
+    - name: /var/cache/xrootd
     - mode: 700
     - user: xrootd
 

@@ -8,6 +8,12 @@ condor-scratch:
     - name: /scratch
     - mode: 1777 
 
+ligo-user:
+  user.present:
+    - name: ligo
+    - uid: 488
+    - gid: 715
+
 condor-worker:
   pkg.installed:
     - pkgs:
@@ -22,7 +28,7 @@ condor-worker:
     - enable: true
     - require:
       - condor-scratch
-      - user: ligo
+      - ligo-user
 #      - user: gatech
 #      - user: osg
     - watch:

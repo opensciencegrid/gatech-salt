@@ -4,6 +4,12 @@ include:
   - osg.host_certs
   - osg.stashcache_config
 
+xrootd-user:
+  user.present:
+    - name: xrootd
+    - uid: 1115
+    - gid: 2115
+
 stashcache:
   pkg.installed:
     - pkgs:
@@ -26,6 +32,7 @@ stashcache-xrootd-server:
     - enable: true
     - require:
       - stashcache
+      - xrootd-user
     - watch:
       - file: /etc/xrootd/Authfile-noauth
       - file: /etc/xrootd/xrootd-stashcache-cache-server.cfg

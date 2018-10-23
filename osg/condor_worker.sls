@@ -14,6 +14,30 @@ ligo-user:
     - uid: 488
     - gid: 178
 
+osg-user:
+  user.present:
+    - name: osg
+    - uid: 1111
+    - gid: 2111
+
+icecube-user:
+  user.present:
+    - name: icecube
+    - uid: 1112
+    - gid: 2112
+
+veritas-user:
+  user.present:
+    - name: veritas
+    - uid: 1113
+    - gid: 2113
+
+cta-user:
+  user.present:
+    - name: cta
+    - uid: 1114
+    - gid: 2114
+
 condor-worker:
   pkg.installed:
     - pkgs:
@@ -29,7 +53,9 @@ condor-worker:
     - require:
       - condor-scratch
       - ligo-user
-#      - user: gatech
-#      - user: osg
+      - osg-user
+      - icecube-user
+      - veritas-user
+      - cta-user
     - watch:
       - file: /etc/condor/config.d/99-worker-local.conf

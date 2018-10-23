@@ -12,7 +12,7 @@ ligo-user:
   user.present:
     - name: ligo
     - uid: 488
-    - gid: 713
+    - gid: 178
 
 condor-worker:
   pkg.installed:

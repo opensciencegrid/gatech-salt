@@ -17,9 +17,13 @@ fetch-crl-cron:
     - enable: true
     - require:
       - pkg: fetch-crl
+  file.managed:
+    - name: /etc/cron.d/fetch-crl
+    - source: salt://osg/files/ca/fetch-crl
 
 fetch-crl-boot:
   service.enabled:
     - name: fetch-crl-boot
     - require:
       - pkg: fetch-crl
+

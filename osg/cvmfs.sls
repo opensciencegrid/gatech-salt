@@ -7,6 +7,10 @@ cvmfs-user:
     - name: cvmfs
     - uid: 486
     - gid: 486
+  file.directory:
+    - name: /var/lib/cvmfs
+    - user: cvmfs
+    - group: cvmfs
 
 cvmfs:
   pkg.installed:

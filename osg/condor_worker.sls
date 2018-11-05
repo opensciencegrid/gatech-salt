@@ -2,6 +2,7 @@ include:
   - osg
   - osg.base_setup
   - osg.condor_base
+  - osg.singularity_base
 
 condor-scratch:
   file.directory:

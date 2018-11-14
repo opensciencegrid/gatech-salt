@@ -9,7 +9,7 @@ condor-user:
     - gid: 64
 
 condor-base:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - condor
     - require:

@@ -3,7 +3,7 @@ include:
   - osg.base_setup
 
 singularity_base:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - singularity
       - singularity-runtime

@@ -13,7 +13,7 @@ cvmfs-user:
     - group: cvmfs
 
 cvmfs:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - osg-oasis
     - require:

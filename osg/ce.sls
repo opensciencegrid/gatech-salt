@@ -4,7 +4,7 @@ include:
   - osg.condor_submit
 
 osg-ce:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - osg-ce-condor
     - require:

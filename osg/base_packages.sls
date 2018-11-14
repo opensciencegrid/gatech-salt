@@ -2,6 +2,6 @@ include:
   - osg
 
 osg_base_packages:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - yum-plugin-priorities

@@ -4,7 +4,7 @@ include:
   - osg.stashcache_config
 
 authenticated_stashcache:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - stashcache-daemon 
       - stashcache-cache-server

@@ -10,7 +10,7 @@ ca_certs:
       - pkg: osg_base_packages
 
 fetch-crl:
-  pkg.installed: []
+  pkg.latest: []
 
 fetch-crl-cron:
   service.running:

@@ -11,7 +11,7 @@ xrootd-user:
     - gid: 2115
 
 stashcache:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - stashcache-daemon 
       - stashcache-cache-server

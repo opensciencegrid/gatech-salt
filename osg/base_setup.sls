@@ -4,7 +4,7 @@ include:
   - osg.base_packages
 
 osg_ntpd_install:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - ntp
 

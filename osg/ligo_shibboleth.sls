@@ -42,14 +42,14 @@ osg-shibboleth-key:
     - source: salt://osg/files/httpd/selfsignedkey.pem
 
 osg-shibboleth-service:
-  pkg.installed:
+  pkg.latest:
     - name: shibboleth
   service.running:
     - enable: true
     - name: shibd
 
 osg-shibboleth-httpd:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - httpd
       - mod_ssl

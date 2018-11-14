@@ -12,7 +12,7 @@ gridftp-lcmaps:
     - mode: 644
 
 globus-gridftp-server:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - osg-gridftp
     - require:

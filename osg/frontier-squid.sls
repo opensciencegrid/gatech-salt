@@ -3,7 +3,7 @@ include:
   - osg.base_setup
 
 frontier-squid:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - frontier-squid
     - require:

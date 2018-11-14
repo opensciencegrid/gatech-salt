@@ -40,7 +40,7 @@ cta-user:
     - gid: 2114
 
 condor-worker:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - condor
     - require:

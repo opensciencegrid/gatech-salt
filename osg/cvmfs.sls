@@ -8,7 +8,7 @@ cvmfs-user:
     - uid: 486
     - gid: 486
   file.directory:
-    - name: /var/lib/cvmfs
+    - name: /scratch/cvmfs/cache
     - user: cvmfs
     - group: cvmfs
 

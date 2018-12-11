@@ -11,6 +11,7 @@ cvmfs-user:
     - name: /scratch/cvmfs/cache
     - user: cvmfs
     - group: cvmfs
+    - makedirs: True
 
 cvmfs:
   pkg.latest:

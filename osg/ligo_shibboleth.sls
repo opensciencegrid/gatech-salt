@@ -43,13 +43,19 @@ shib-conf-attribute-map:
 
 osg-shibboleth-cert:
   file.managed:
-    - name: /etc/pki/tls/certs/osg-shibboleth.pace.gatech.edu.pem
+    - name: /etc/shibboleth/sp-cert.pem
     - source: salt://osg/files/httpd/selfsignedcert.pem
+    - user: shibd
+    - group: shibd
+    - mode: 640
 
 osg-shibboleth-key:
   file.managed:
-    - name: /etc/pki/tls/private/osg-shibboleth.pace.gatech.edu.key.pem
+    - name: /etc/shibboleth/sp-key.pem
     - source: salt://osg/files/httpd/selfsignedkey.pem
+    - user: shibd
+    - group: shibd
+    - mode: 600
 
 osg-shibboleth-service:
   pkg.latest:

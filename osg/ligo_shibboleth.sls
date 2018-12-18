@@ -31,6 +31,22 @@ shib-ssl-conf:
     - name: /etc/httpd/conf.d/ssl.conf
     - source: salt://osg/files/httpd/ssl.conf
 
+shib-ssl-cert:
+  file.managed:
+    - name: /etc/pki/tls/certs/osg-shibboleth.pace.gatech.edu.pem
+    - source: salt://osg/files/hostcerts/{{ grains['host'] }}/hostcert.pem
+    - user: apache
+    - group: apache
+    - mode: 640
+
+shib-ssl-key:
+  file.managed:
+    - name: /etc/pki/tls/private/osg-shibboleth.pace.gatech.edu.key.pem
+    - source: salt://osg/files/hostcerts/{{ grains['host'] }}/hostkey.pem
+    - user: apache
+    - group: apache
+    - mode: 600
+
 shib-conf-shibboleth2:
   file.managed:
     - name: /etc/shibboleth/shibboleth2.xml

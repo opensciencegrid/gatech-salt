@@ -5,7 +5,7 @@
     xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
     clockSkew="180">
 
-    <ApplicationDefaults entityID=""
+    <ApplicationDefaults entityID="https://osg-shibboleth.pace.gatech.edu/shibboleth-sp"
                          REMOTE_USER="krbPrincipalName eduPersonPrincipalName">
 
         <Sessions lifetime="600" timeout="600" checkAddress="false" relayState="ss:mem" 

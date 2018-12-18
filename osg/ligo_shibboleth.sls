@@ -31,6 +31,16 @@ shib-ssl-conf:
     - name: /etc/httpd/conf.d/ssl.conf
     - source: salt://osg/files/httpd/ssl.conf
 
+shib-conf-shibboleth2:
+  file.managed:
+    - name: /etc/shibboleth/shibboleth2.xml
+    - source: salt://osg/files/shibboleth/shibboleth2.xml
+
+shib-conf-attribute-map:
+  file.managed:
+    - name: /etc/shibboleth/attribute-map.xml
+    - source: salt://osg/files/shibboleth/attribute-map.xml
+
 osg-shibboleth-cert:
   file.managed:
     - name: /etc/pki/tls/certs/osg-shibboleth.pace.gatech.edu.pem

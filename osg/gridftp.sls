@@ -2,6 +2,7 @@ include:
   - osg
   - osg.base_setup
   - osg.host_certs
+  - osg.ldg_client_env
 
 
 gridftp-lcmaps:
@@ -11,10 +12,12 @@ gridftp-lcmaps:
     - user: root
     - mode: 644
 
+
 globus-gridftp-server:
   pkg.latest:
     - pkgs:
       - osg-gridftp
+      - ldg-client
     - require:
       - osg_base_packages
       - ca_certs

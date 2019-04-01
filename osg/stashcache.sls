@@ -15,6 +15,11 @@ stashcache:
     - pkgs:
       - stashcache-daemon 
       - stashcache-cache-server
+      - gfal2-util
+      - gfal2-plugin-xrootd
+      - gfal2-plugin-file
+      - gfal2-plugin-http
+      - gfal2-plugin-gridftp
     - require:
       - osg_base_packages
       - ca_certs

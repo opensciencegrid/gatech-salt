@@ -29,17 +29,73 @@ shib-userdir-conf:
 shib-ssl-conf:
   file.managed:
     - name: /etc/httpd/conf.d/ssl.conf
-    - source: salt://osg/files/httpd/ssl.conf
+    - source: salt://osg/files/httpd/ssl.conf_new
+
+shib-ssl-cert:
+  file.managed:
+    - name: /etc/pki/tls/certs/osg-shibboleth.pace.gatech.edu.pem
+    - source: salt://osg/files/hostcerts/{{ grains['host'] }}/hostcert.pem
+    - user: apache
+    - group: apache
+    - mode: 640
+
+shib-ssl-key:
+  file.managed:
+    - name: /etc/pki/tls/private/osg-shibboleth.pace.gatech.edu.key.pem
+    - source: salt://osg/files/hostcerts/{{ grains['host'] }}/hostkey.pem
+    - user: apache
+    - group: apache
+    - mode: 600
+
+shib-ssl-cert-new:
+  file.managed:
+    - name: /etc/pki/tls/certs/osg-shibboleth.pace.gatech.edu.cer
+    - source: salt://osg/files/hostcerts/{{ grains['host'] }}/osg-shibboleth.pace.gatech.edu.cer
+    - user: apache
+    - group: apache
+    - mode: 640
+
+shib-ssl-key-new:
+  file.managed:
+    - name: /etc/pki/tls/private/osg-shibboleth.pace.gatech.edu.key
+    - source: salt://osg/files/hostcerts/{{ grains['host'] }}/osg-shibboleth.pace.gatech.edu.key
+    - user: apache
+    - group: apache
+    - mode: 600
+
+shib-conf-shibboleth2:
+  file.managed:
+    - name: /etc/shibboleth/shibboleth2.xml
+    - source: salt://osg/files/shibboleth/shibboleth2.xml
+
+shib-conf-attribute-map:
+  file.managed:
+    - name: /etc/shibboleth/attribute-map.xml
+    - source: salt://osg/files/shibboleth/attribute-map.xml
 
 osg-shibboleth-cert:
   file.managed:
-    - name: /etc/pki/tls/certs/osg-shibboleth.pace.gatech.edu.pem
+    - name: /etc/shibboleth/sp-cert.pem
     - source: salt://osg/files/httpd/selfsignedcert.pem
+    - user: shibd
+    - group: shibd
+    - mode: 640
 
 osg-shibboleth-key:
   file.managed:
-    - name: /etc/pki/tls/private/osg-shibboleth.pace.gatech.edu.key.pem
+    - name: /etc/shibboleth/sp-key.pem
     - source: salt://osg/files/httpd/selfsignedkey.pem
+    - user: shibd
+    - group: shibd
+    - mode: 600
+
+osg-shibboleth-identityid-cert:
+  file.managed:
+    - name: /etc/shibboleth/login.ligo.org.cert.LIGOCA.pem
+    - source: salt://osg/files/shibboleth/login.ligo.org.cert.LIGOCA.pem
+    - user: shibd
+    - group: shibd
+    - mode: 644
 
 osg-shibboleth-service:
   pkg.latest:
@@ -47,6 +103,10 @@ osg-shibboleth-service:
   service.running:
     - enable: true
     - name: shibd
+    - watch:
+      - file: /etc/shibboleth/login.ligo.org.cert.LIGOCA.pem
+      - file: /etc/shibboleth/shibboleth2.xml
+      - file: /etc/shibboleth/attribute-map.xml
 
 osg-shibboleth-httpd:
   pkg.latest:
@@ -62,3 +122,13 @@ osg-shibboleth-httpd:
       - file: /etc/httpd/conf.d/ssl.conf
     - require:
       - osg-shibboleth-service
+
+mount-ligo-web-nfs:
+  mount.mounted:
+    - name: /mnt/ligo_web
+    - device: gpfs-nfs4-vip.pace.gatech.edu:/gpfs/pace1/project/pligo/web/LIGO
+    - fstype: nfs
+    - mkmnt: True
+    - persist: True
+    - opts:
+      - ro,vers=3,rsize=32786,wsize=32786

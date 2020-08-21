@@ -9,3 +9,5 @@ osg_base_packages:
       - nano
       - emacs
       - git
+      - fabric
+      - python-ldap

@@ -7,6 +7,7 @@ condor-sched:
   pkg.latest:
     - pkgs:
       - condor
+      - vo-client
     - require:
       - osg_base_packages
   file.managed:

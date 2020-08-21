@@ -73,6 +73,7 @@ condor-submit-host:
       - glideinwms-userschedd
       - gratia-probe-condor
       - osg-configure-gratia
+      - vo-client
     - require:
       - osg_base_packages
   service.running:

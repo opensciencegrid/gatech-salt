@@ -12,6 +12,10 @@ condor-base:
   pkg.latest:
     - pkgs:
       - condor
+      - osg-release
+      - osg-version
+      - osg-ca-certs
+      - osg-ca-certs-updater
     - require:
       - osg_base_packages
       - condor-user

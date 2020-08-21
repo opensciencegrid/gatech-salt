@@ -1,0 +1,3 @@
+# update ligo gridmap for authenticated stashcache
+
+0 */2 * * * root /usr/local/sbin/grid-mapfile.ligo-cvmfs.py > /dev/null 2>&1

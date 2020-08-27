@@ -1,7 +1,7 @@
 include:
-  - osg
+  - osg.35
 
-osg_base_packages:
+osg_base_packages-35:
   pkg.latest:
     - pkgs:
       - yum-plugin-priorities

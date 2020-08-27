@@ -4,7 +4,7 @@ include:
   - osg.condor_base
   - osg.singularity_base
 
-lscsoft-production-repo:
+lscsoft-production-repo35:
   pkgrepo.managed:
     - name: lscsoft-production
     - humanname: lscsoft-production to install ldg-client
@@ -12,7 +12,7 @@ lscsoft-production-repo:
     - gpgcheck: 0
     - type: rpm-md
 
-condor-submit:
+condor-submit35:
   pkg.latest:
     - pkgs:
       - condor

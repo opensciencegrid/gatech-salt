@@ -132,3 +132,13 @@ mount-ligo-web-nfs:
     - persist: True
     - opts:
       - ro,vers=3,rsize=32786,wsize=32786
+
+mount-ligo-web-nfs-sghonge3-scratch:
+  mount.mounted:
+    - name: /mnt/sghonge3_scratch
+    - device: gpfs-nfs4-vip.pace.gatech.edu:/gpfs/scratch1/3/sghonge3
+    - fstype: nfs
+    - mkmnt: True
+    - persist: True
+    - opts:
+      - ro,vers=3,rsize=32786,wsize=32786

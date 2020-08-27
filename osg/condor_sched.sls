@@ -7,6 +7,7 @@ condor-sched:
   pkg.latest:
     - pkgs:
       - condor
+      - vo-client
     - require:
       - osg_base_packages
   file.managed:
@@ -17,3 +18,9 @@ condor-sched:
     - enable: true
     - watch:
       - file: /etc/condor/config.d/99-sched-local.conf
+
+config-glideins-password-auth-sched:
+  file.managed:
+    - name: /etc/condor/config.d/50-password-auth.conf
+    - source: salt://osg/files/glideins/password-auth.conf
+    - mode: 644

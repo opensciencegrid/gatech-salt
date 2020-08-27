@@ -3,6 +3,7 @@ include:
   - osg.base_setup
   - osg.condor_base
   - osg.singularity_base
+  - osg.condor_glideins
 
 condor-scratch:
   file.directory:
@@ -60,3 +61,8 @@ condor-worker:
       - cta-user
     - watch:
       - file: /etc/condor/config.d/99-worker-local.conf
+
+condor-worker-singularity-conf:
+  file.managed:
+    - name: /etc/condor/config.d/95-singularity.conf
+    - source: salt://osg/files/condor/condor_worker_singularity.conf

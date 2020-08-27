@@ -1,0 +1,18 @@
+[Unit]
+Description=Generate fresh xrootd proxy
+After=network-online.target
+
+# Have systemd require the existence of these files;
+# if they aren't present, this service will fail with
+# a reasonable error message.
+AssertPathExists=/etc/grid-security/xrd/xrdcert.pem
+AssertPathExists=/etc/grid-security/xrd/xrdkey.pem
+
+[Service]
+User=xrootd
+Group=xrootd
+Type=oneshot
+ExecStart = /usr/libexec/xcache/renew-proxy
+
+[Install]
+WantedBy=multi-user.target

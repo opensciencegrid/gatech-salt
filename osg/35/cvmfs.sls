@@ -30,8 +30,8 @@ autofs-osg-35:
     - enable: true
     - require:
       - cvmfs
-  file.line:
+  file.replace:
     - name: /etc/auto.master
-    - content: "/cvmfs /etc/auto.cvmfs"
-    - mode: ensure
-    - after: "/nv     /etc/auto.nv"
+    - pattern: ^/cvmfs /etc/auto.cvmfs.*
+    - repl: /cvmfs /etc/auto.cvmfs
+    - append_if_not_found: True

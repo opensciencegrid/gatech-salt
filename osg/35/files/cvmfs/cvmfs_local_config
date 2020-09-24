@@ -1,4 +1,5 @@
 CVMFS_REPOSITORIES="`echo $((echo oasis.opensciencegrid.org;echo cms.cern.ch;ls /cvmfs)|sort -u)|tr ' ' ,`"
 CVMFS_QUOTA_LIMIT=20000
-CVMFS_HTTP_PROXY="http://osg-sched2.pace.gatech.edu:3128"
+#CVMFS_HTTP_PROXY="http://osg-sched2.pace.gatech.edu:3128"
+CVMFS_HTTP_PROXY="http://osg-slate-control.pace.gatech.edu:31200"
 CVMFS_CACHE_BASE="/scratch/cvmfs/cache"

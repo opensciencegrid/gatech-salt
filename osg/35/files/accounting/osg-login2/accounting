@@ -1,0 +1,389 @@
+#!/usr/bin/ruby -w
+
+# written by Henning Fehrmann <henning.fehrmann@ligo.org> and
+# Carsten Aulbert <carsten.aulbert@ligo.org>
+# and some addition by Satya Mohapatra <patra@mit.edu>
+# December 2014
+# Query all local schedd for jobs finished/removed within the past day
+# and aggregate this information into simply daily text file
+
+# to cut down on run duration, the following HISTORY related settings
+# for condor are encouraged to be used:
+#
+# ENABLE_HISTORY_ROTATION=TRUE
+# MAX_HISTORY_LOG=1000000000
+# MAX_HISTORY_ROTATIONS=7
+# ROTATE_HISTORY_DAILY=True
+# HISTORY_HELPER_MAX_HISTORY=999999999
+
+VERSION = '20160719'
+
+# where to find our system defaults
+defaults_file = '/etc/default/ldg-accounting-collector'
+
+require 'json'
+require 'getoptlong'
+require 'fileutils'
+require 'time'
+require 'English'
+
+# set internal default values
+opts = {
+  verbose:   false,
+  cluster:   '',
+  output:    'stdout',
+  pool:      '',
+  current:   true,         # flags if current symlink needs to be created
+  now:       Time.now.gmtime,
+  start:     Time.at(0),   # Time object for query start
+  end:       Time.at(0),   # Time object for query end
+  utc:       Time.at(0),   # Time object for query (temporarily needed)
+}
+
+# function: add system defaults from file into opts
+def read_defaults(fname, o)
+  if File.exist?(fname)
+    IO.foreach(fname) do |line|
+      next if line.match(/^\s*#/) || line.match(/^\s*$/)
+      if /(?<key>\S+)\s*=\s*(?<val>\S+)/ =~ line
+        o[key.to_sym] = val
+      end
+    end
+  else
+    STDERR.puts "Warning: System defaults file '#{fname}' does not exist"
+  end
+end
+
+# function: simple note exhausitve validity check of YYYY-MM-DD
+def check_iso_date(d)
+  if /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})$/ =~ d &&
+     year.to_i.between?(2000, 2099) &&
+     month.to_i.between?(1, 12) &&
+     day.to_i.between?(1, 31)
+    return true
+  else
+    return false
+  end
+end
+
+# function: changes Time objct back to midnight of same day
+def utc_midnight(e)
+  a = e.gmtime.to_a
+  Time.utc(a[5], a[4], a[3], 0, 0, 0)
+end
+
+# function: parse command line to augment opts
+def parse_cmdline(o)
+  cmd_opts = GetoptLong.new(
+    ['--cluster', '-c', GetoptLong::REQUIRED_ARGUMENT],
+    ['--pool',    '-p', GetoptLong::REQUIRED_ARGUMENT],
+    ['--end',     '-e', GetoptLong::REQUIRED_ARGUMENT],
+    ['--help',    '-h', GetoptLong::NO_ARGUMENT],
+    ['--output',  '-o', GetoptLong::REQUIRED_ARGUMENT],
+    ['--start',   '-s', GetoptLong::REQUIRED_ARGUMENT],
+    ['--utc',     '-u', GetoptLong::REQUIRED_ARGUMENT],
+    ['--verbose', '-v', GetoptLong::OPTIONAL_ARGUMENT],
+    ['--version', '-V', GetoptLong::OPTIONAL_ARGUMENT]
+  )
+  cmd_opts.each do |opt, arg|
+    case opt
+    when '--cluster'
+      o[:cluster] = arg
+    when '--pool'
+      o[:pool] = arg
+    when '--end'
+      if check_iso_date(arg)
+        o[:end] = Time.parse("#{arg}T00:00:00Z")
+        o[:current] = false
+      else
+        STDERR.puts "argument --start invalid (given #{arg})"
+        exit 1
+      end
+    when '--help'
+      puts <<-EOF
+#{$PROGRAM_NAME} [OPTIONS]
+
+-c, --cluster: Mandatory argument to depict which cluster the accounting
+               information belongs to - is also part of output
+-h, --help:    Show this help message
+-o, --output:  Place results into this directory
+-v, --verbose: Be more verbose about what is happening
+               note, prepending # to ensure it does not mangle output
+-V, --version: Output version string
+
+You can specify the query range by specifying either
+-u, --utc:     Run query for specified UTC date (YYYY-MM-DD)
+or
+-s, --start:   start query at UTC date YYYY-MM-DD (start of day, i.e. 00:00:00)
+-e, --end:     stop query at UTC date YYYY-MM-DD (end of day, i.e. 23:59:59,
+               ignoring leap seconds
+
+Please note that these -u and (-s/-e) are mutually exclusive and -u
+implies -s/-e set to the same date.
+
+If no date is given it will be the previous full UTC day prior to the
+script's run time (a.k.a. now).
+
+EOF
+      exit 0
+    when '--output'
+      o[:output] = File.expand_path(arg)
+    when '--start'
+      if check_iso_date(arg)
+        o[:start] = Time.parse("#{arg}T00:00:00Z")
+        o[:current] = false
+      else
+        STDERR.puts "argument --start invalid (given #{arg})"
+        exit 1
+      end
+    when '--utc'
+      if check_iso_date(arg)
+        o[:utc] = Time.parse("#{arg}T00:00:00Z")
+        o[:current] = false
+      else
+        STDERR.puts "argument --utc invalid (given #{arg})"
+        exit 1
+      end
+    when '--verbose'
+      o[:verbose] = 42
+    when '--version'
+      puts "This is ldg-accounting-collector version\n#{VERSION}"
+      exit 1
+    else
+      STDERR.puts "unrecognized option #{arg}"
+    end
+  end
+end
+
+# function: Check if values in opts are valid
+def check_opts(o)
+  # bail out unless cluster is set
+  if o[:cluster].empty?
+    # fall back to previous implementation where cluster = ARGV[0]
+    if ARGV[0].nil?
+      STDERR.puts 'Cluster name unset, please specify with --cluster'
+      exit 1
+    else
+      opts[:cluster] = ARGV[0]
+    end
+  end
+
+  # check if output directory exists
+  unless o[:output].eql?('stdout') || File.directory?(o[:output])
+    STDERR.puts "output directory #{o[:output]} does not exists"
+    exit 1
+  end
+
+  # check query range
+  # (1) both --utc and --start|--end were given
+  unless o[:utc].to_i == 0 || (o[:start].to_i == 0 && o[:end].to_i == 0)
+    STDERR.puts '--utc and --start/--end are mutually exclusive'
+    STDERR.puts 'please check --help'
+    exit 1
+  end
+
+  # (2) check if none of --utc/--start/--end were given, then computer
+  # yesterday UTC
+  if o[:utc].to_i == 0 && o[:start].to_i == 0 && o[:end].to_i == 0
+    # based upon current time, find UTC yesterday
+    o[:start] = utc_midnight(o[:now]) - 86_400
+    o[:end]   = o[:start] + 86_399
+  else
+    # (3) if --utc is given, set start/end, otherwise use/check --start/--end
+    if o[:utc].to_i == 0
+      if o[:start].to_i == 0 || o[:end].to_i == 0
+        STDERR.puts 'Both --start and --end must be given'
+        exit 1
+      end
+      if o[:start] > o[:end]
+        STDERR.puts 'date specified by --start must not be later'
+        STDERR.puts 'than the one given by --end'
+        exit 1
+      end
+      o[:end] += 86_399
+    else
+      o[:start] = utc_midnight(o[:utc])
+      o[:end]   = o[:start] + 86_399
+    end
+  end
+end
+
+# update option hash with
+# ... system defaults
+read_defaults(defaults_file, opts)
+# ... command line overrides
+parse_cmdline(opts)
+# ... computes values
+check_opts(opts)
+
+if opts[:verbose]
+  puts "# Now: #{opts[:now].localtime} | #{opts[:now].gmtime}"
+  puts '# Will restrict search between epoch '
+  puts "# #{opts[:start].to_i} and #{opts[:end].to_i}"
+  puts '# which translates to '
+  puts "# #{opts[:start].localtime} | #{opts[:start].gmtime}"
+  puts '# and'
+  puts "# #{opts[:end].localtime} | #{opts[:end].gmtime}."
+end
+
+# Automatic discovery of pool's hosts
+puts '# will now try auto-discovery of submit hosts, this may take some time' \
+     if opts[:verbose]
+
+cmdline_pool = ( opts[:pool].empty? ? '' : "-pool #{opts[:pool]}" )
+
+hosts = []
+3.times do
+  ret = `/usr/bin/condor_status #{cmdline_pool} -schedd -format \"%s\\n\" Machine`
+  hosts << ret.split("\n") unless ret.empty?
+  sleep 10
+end
+
+# make host entries unique
+hosts = hosts.flatten.uniq
+
+# exit if still empty
+if hosts.empty?
+  STDERR.puts 'condor_status did not return any schedd names, exiting'
+  exit 1
+end
+
+if opts[:verbose]
+  puts '# Will now query the following discovered submit hosts:'
+  hosts.each do |h|
+    puts "#   #{h}"
+  end
+end
+
+# gather historic data from hosts
+history = []
+
+hosts.each do |machine|
+  history << Thread.new(machine) do |m|
+    Thread.current[:t_start] = Time.now
+    # constructing command first to evade excessive escapism
+    cmd = "/usr/bin/condor_history #{cmdline_pool} -name " + m.chomp + ' ' \
+          '-format "{ \"Owner\" : \"%s\", " Owner ' \
+          '-format "\"AccountingGroup\" : \"%s\", " AccountingGroup ' \
+          '-format "\"LigoSearchUser\" : \"%s\", " LigoSearchUser ' \
+          '-format "\"LigoSearchTag\" : \"%s\", " LigoSearchTag ' \
+          '-format "\"RequestCpus\" : \"%s\", " RequestCpus ' \
+          '-format "\"EnteredCurrentStatus\" : \"%s\", " EnteredCurrentStatus ' \
+          '-format "\"RemoteWallClocktime\" : \"%.0f\" }\n" RemoteWallClocktime ' \
+          '-constraint "EnteredCurrentStatus >= ' + opts[:start].to_i.to_s +
+          ' && EnteredCurrentStatus <= ' + opts[:end].to_i.to_s +
+          ' && JobUniverse != 7"'
+
+    Thread.current[:output] = `#{cmd} 2>/dev/null`
+    if $CHILD_STATUS.to_i != 0
+      Thread.current[:err] = "Query error for #{m.chomp}, either no finished jobs exist in wanted day or query timed-out"
+    end
+    Thread.current[:t_end] = Time.now
+
+    run_time = Thread.current[:t_end] - Thread.current[:t_start]
+    puts "# Thread for host '#{m.chomp}' ended after #{run_time.to_i}s (#{Thread.current[:output].lines.count} results returned)" if opts[:verbose]
+  end
+end
+
+# wait for threads to end
+history.collect(&:join)
+
+# finally generate accounting summary
+# the structure is simple, first key is date string "YYYY-MM-DD",
+# second key is "owner" and final key is "tag"
+accounting = {}
+
+# create look-up array for output files
+# the idea is to look up corresponding date string YYYY-MM-DD from
+# epoch seconds relative to opts[:start]
+
+day_lookup = []
+days = 1 + (opts[:end] - opts[:start]) / 86_400
+days.to_i.times do |i|
+  date = (opts[:start] + i * 86_400).strftime('%F')
+  day_lookup.push(date)
+  accounting[date] = {}
+end
+
+# save start of time range
+epoch = opts[:start].to_i
+
+history.each do |h|
+  STDERR.puts "#{h[:err]}" if h.key?(:err)
+
+  h[:output].each_line do |line|
+    job = JSON.parse(line)
+    owner = ''
+    tag = ''
+
+    # owner is set by 'LigoSearchUser' or 'Owner' or default
+    if job.key?('LigoSearchUser')
+      owner = job['LigoSearchUser']
+    elsif job.key?('Owner')
+      owner = job['Owner']
+    else
+      owner = 'UNKNOWN'
+    end
+
+    # tar is set by 'LigoSearchTag' or 'AccountingGroup' or default
+    if job.key?('LigoSearchTag')
+      tag = job['LigoSearchTag']
+    elsif job.key?('AccountingGroup')
+      tag = job['AccountingGroup']
+    else
+      tag = 'UNDEFINED'
+    end
+
+    # remove owner from end of tag if present, this could break down
+    # in the unlikely event of owner being legitimately the last bit
+    # of tag
+    tag.sub!(/\.#{owner}$/, '')
+
+    # look up date string
+    date = day_lookup[((job['EnteredCurrentStatus'].to_i - epoch) / 86_400).to_i]
+
+    # add to global accounting information
+    accounting[date][owner] ||= {}
+    accounting[date][owner][tag] = 0 unless accounting[date][owner].key?(tag)
+    cpu_weight = (job.key?('RequestCpus') ? job['RequestCpus'] : 1).to_f
+    accounting[date][owner][tag] += cpu_weight * job['RemoteWallClocktime'].to_f / 3_600.0
+  end
+end
+
+# output to stdout or into files?
+
+if opts[:output].eql?('stdout')
+  accounting.each_key do |date|
+    accounting[date].each_key do |owner|
+      accounting[date][owner].each_pair do |key, val|
+        puts "#{owner} #{key} #{val.ceil} #{date} #{opts[:cluster]}"
+      end
+    end
+  end
+else
+  # loop over keys of accounting (date strings) and write out files
+  accounting.each_key do |date|
+    File.open("#{opts[:output]}/#{date}.ldg", 'w') do |file|
+      accounting[date].each_key do |owner|
+        accounting[date][owner].each_pair do |key, val|
+          file.write("#{owner} #{key} #{val.ceil} #{date} #{opts[:cluster]}\n")
+        end
+      end
+    end
+  end
+
+  if opts[:current]
+    date = day_lookup[-1]
+
+    # update current symlink
+    linkname = "#{opts[:output]}/latest-accounting.ldg"
+    FileUtils.rm(linkname) if File.exist?(linkname)
+
+    FileUtils.ln_s("#{opts[:output]}/#{date}.ldg", linkname)
+    puts "# Symlinked '#{linkname}' to '#{opts[:output]}/#{date}.ldg'" \
+         if opts[:verbose]
+  else
+    puts '# As --utc or --start/--end range was given, not updating symlink' \
+         if opts[:verbose]
+  end
+end

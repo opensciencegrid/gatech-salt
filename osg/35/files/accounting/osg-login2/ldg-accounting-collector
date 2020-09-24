@@ -1,0 +1,9 @@
+# simple defaults file for ldg-accounting-collector
+
+# default values
+
+# define which cluster this script is running in
+cluster = PACE-LIGO
+
+# define where the output should be written to
+  output = /gpfs/pace1/project/pligo/web/LIGO/ldg-accounting

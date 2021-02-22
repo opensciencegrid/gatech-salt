@@ -6,4 +6,4 @@
 cluster = PACE-LIGO
 
 # define where the output should be written to
-  output = /gpfs/pace1/project/pligo/web/LIGO/ldg-accounting
+  output = /storage/ligo1/web/LIGO/ldg-accounting
